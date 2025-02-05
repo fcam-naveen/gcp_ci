@@ -27,6 +27,11 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['rm', '-f', 'pytest-container']
 
+  # Step 8: Set GCS bucket for static website hosting (this step is optional if the bucket is already configured)
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['web', 'set', '-m', 'index.html', '-e', '404.html', 'gs://my-allure-reports']
+
+
 artifacts:
   objects:
     location: 'gs://my-allure-reports/${BUILD_ID}/'
