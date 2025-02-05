@@ -26,7 +26,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
 # Install Allure
-RUN wget -qO /tmp/allure.zip https://github.com/allure-framework/allure2/releases/latest/download/allure-2.22.0.zip && \
+RUN wget -qO /tmp/allure.zip https://github.com/allure-framework/allure2/releases/tag/2.32.2/allure-2.32.2.tgz  && \
     unzip /tmp/allure.zip -d /opt/allure && \
     ln -s /opt/allure/bin/allure /usr/local/bin/allure && \
     rm /tmp/allure.zip
