@@ -15,7 +15,7 @@ COPY . .
 
 # Update and install OpenJDK 17
 RUN apt-get update && \
-    apt-get install -y openjdk-17-jdk && \
+    apt-get install -y openjdk-17-jdk wget && \
     apt-get clean
 
 # Verify Java installation
