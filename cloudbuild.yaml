@@ -21,7 +21,7 @@ steps:
 
   # Step 6: Upload Allure report as build artifact
   - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['cp', '-r', 'allure-report', 'gs://$PROJECT_ID-allure-reports/${BUILD_ID}/']
+    args: ['cp', '-r', 'allure-report', 'gs://my-allure-reports/${BUILD_ID}/']
 
   # Step 7: Stop and remove the Docker container
   - name: 'gcr.io/cloud-builders/docker'
@@ -29,7 +29,7 @@ steps:
 
 artifacts:
   objects:
-    location: 'gs://$PROJECT_ID-allure-reports/${BUILD_ID}/'
+    location: 'gs://my-allure-reports/${BUILD_ID}/'
     paths: ['allure-report/**']
 
 options:
