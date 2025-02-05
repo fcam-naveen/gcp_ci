@@ -1,0 +1,25 @@
+steps:
+  # Step 1: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/my-python-app', '.']
+
+  # Step 2: Run the Docker container to execute tests and generate Allure report
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['run', '--name', 'pytest-container', 'gcr.io/$PROJECT_ID/my-python-app', 'sh', '-c', 'pytest --alluredir=allure-results']
+
+  # Step 3: Copy the Allure results from the container to the host
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['cp', 'pytest-container:/app/allure-results', './allure-results']
+
+  # Step 4: Generate Allure report
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['run', '--rm', '-v', '$(pwd)/allure-results:/app/allure-results', '-v', '$(pwd)/allure-report:/app/allure-report', 'gcr.io/$PROJECT_ID/my-python-app', 'sh', '-c', 'allure generate --clean -o allure-report allure-results']
+
+  # Step 5: Upload Allure report as build artifact
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['cp', '-r', 'allure-report', 'gs://$PROJECT_ID-allure-reports/${BUILD_ID}/']
+
+artifacts:
+  objects:
+    location: 'gs://$PROJECT_ID-allure-reports/${BUILD_ID}/'
+    paths: ['allure-report/**']
