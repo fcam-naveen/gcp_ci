@@ -13,15 +13,26 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 # Copy the rest of the application code into the container
 COPY . .
 
-# Install Allure command-line tool
+# Update and install OpenJDK 17
 RUN apt-get update && \
-    apt-get install -y curl gnupg && \
-    curl -sL https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - && \
-    echo "deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/adoptopenjdk.list && \
-    apt-get update && \
-    apt-get install -y adoptopenjdk-11-hotspot && \
-    curl -sL https://github.com/allure-framework/allure2/releases/download/2.13.8/allure-2.13.8.tgz | tar -xz -C /opt && \
-    ln -s /opt/allure-2.13.8/bin/allure /usr/bin/allure
+    apt-get install -y openjdk-17-jdk && \
+    apt-get clean
+
+# Verify Java installation
+RUN java -version
+
+# Set JAVA_HOME environment variable
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV PATH="$JAVA_HOME/bin:$PATH"
+
+# Install Allure
+RUN wget -qO /tmp/allure.zip https://github.com/allure-framework/allure2/releases/latest/download/allure-2.22.0.zip && \
+    unzip /tmp/allure.zip -d /opt/allure && \
+    ln -s /opt/allure/bin/allure /usr/local/bin/allure && \
+    rm /tmp/allure.zip
+
+# Verify installation
+RUN allure --version
 
 # Default command (overridden in cloudbuild.yaml)
 #CMD ["sh", "-c", "pytest --alluredir=allure-results && allure generate --clean -o allure-report allure-results"]
