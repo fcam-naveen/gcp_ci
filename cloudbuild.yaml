@@ -23,3 +23,6 @@ artifacts:
   objects:
     location: 'gs://$PROJECT_ID-allure-reports/${BUILD_ID}/'
     paths: ['allure-report/**']
+
+options:
+  logging: CLOUD_LOGGING_ONLY    
