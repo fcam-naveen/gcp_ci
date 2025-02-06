@@ -31,6 +31,10 @@ steps:
   - name: 'gcr.io/cloud-builders/gsutil'
     args: ['web', 'set', '-m', 'index.html', '-e', '404.html', 'gs://my-allure-reports']
 
+  # Step 9: Print the URL of the Allure report
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args: ['-c', 'echo "Allure report URL: http://$PROJECT_ID-allure-reports.storage.googleapis.com/${BUILD_ID}/index.html"']
 
 artifacts:
   objects:
