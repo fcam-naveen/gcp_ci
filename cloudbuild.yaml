@@ -37,7 +37,7 @@ steps:
   # Step 8: Set GCS bucket for static website hosting (this step is optional if the bucket is already configured)
   - id: 'Set GCS bucket for static website hosting (this step is optional if the bucket is already configured)'
     name: 'gcr.io/cloud-builders/gsutil'
-    args: ['web', 'set', '-m', 'index.html', '-e', '404.html', 'gs://my-allure-reports']
+    args: ['web', 'set', '-m', 'index.html', '-e', '404.html', 'gs://my-allure-reports/${BUILD_ID}/']
 
   # Step 9: Print the URL of the Allure report
   - name: 'gcr.io/cloud-builders/gcloud'
