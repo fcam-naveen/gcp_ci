@@ -14,11 +14,6 @@ steps:
     name: 'gcr.io/cloud-builders/docker'
     args: ['exec', 'pytest-container', 'sh', '-c', 'pytest --alluredir=allure-results']
 
-  # Step 3: Execute tests inside the running container
-  - id: 'LIST files in the container'
-    name: 'gcr.io/cloud-builders/docker'
-    args: ['exec', 'pytest-container', 'sh', '-c', 'ls -ltr  allure-results']    
-
  # Step 4: Generate Allure report inside the running container
   - id: 'Generate Allure Report'
     name: 'gcr.io/cloud-builders/docker'
@@ -28,10 +23,6 @@ steps:
   - id: 'Copy the Allure report from the container to the host'
     name: 'gcr.io/cloud-builders/docker'
     args: ['cp', 'pytest-container:/app/allure-report', './allure-report']
-
-  - id: 'LIST files in the container'
-    name: 'gcr.io/cloud-builders/docker'
-    args: ['exec', 'pytest-container', 'sh', '-c', 'ls -ltr  allure-report']       
 
   # Step 6: Upload Allure report as build artifact
   - id: 'Upload Allure report as build artifact'
