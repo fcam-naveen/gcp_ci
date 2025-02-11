@@ -12,12 +12,17 @@ steps:
   # Step 3: Execute tests inside the running container
   - id: 'Execute tests inside the running container'
     name: 'gcr.io/cloud-builders/docker'
-    args: ['exec', 'pytest-container', 'sh', '-c', 'pytest --alluredir=allure-report']
+    args: ['exec', 'pytest-container', 'sh', '-c', 'pytest --alluredir=allure-results']
 
   # Step 3: Execute tests inside the running container
   - id: 'LIST files in the container'
     name: 'gcr.io/cloud-builders/docker'
-    args: ['exec', 'pytest-container', 'sh', '-c', 'ls -ltr  allure-report']    
+    args: ['exec', 'pytest-container', 'sh', '-c', 'ls -ltr  allure-results']    
+
+ # Step 4: Generate Allure report inside the running container
+  - id: 'Generate Allure Report'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['exec', 'pytest-container', 'sh', '-c', 'allure generate --clean -o allure-report allure-results']
 
   # Step 5: Copy the Allure report from the container to the host
   - id: 'Copy the Allure report from the container to the host'
@@ -27,7 +32,7 @@ steps:
   # Step 6: Upload Allure report as build artifact
   - id: 'Upload Allure report as build artifact'
     name: 'gcr.io/cloud-builders/gsutil'
-    args: ['cp', '-r', './allure-report', 'gs://my-allure-reports/${BUILD_ID}/']
+    args: ['cp', '-r', './allure-report', 'gs://my-allure-reports-new/']
 
   # Step 7: Stop and remove the Docker container
   - id: 'Stop and remove the Docker container'
@@ -37,16 +42,16 @@ steps:
   # Step 8: Set GCS bucket for static website hosting (this step is optional if the bucket is already configured)
   - id: 'Set GCS bucket for static website hosting (this step is optional if the bucket is already configured)'
     name: 'gcr.io/cloud-builders/gsutil'
-    args: ['web', 'set', '-m', 'index.html', '-e', '404.html', 'gs://my-allure-reports/${BUILD_ID}/']
+    args: ['web', 'set', '-m', 'index.html', '-e', 'index.html', 'gs://my-allure-reports-new/']
 
   # Step 9: Print the URL of the Allure report
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
-    args: ['-c', 'echo "Allure report URL: http://$PROJECT_ID-allure-reports.storage.googleapis.com/${BUILD_ID}/index.html"']
+    args: ['-c', 'echo "Allure report URL: http://$PROJECT_ID-allure-reports.storage.googleapis.com/index.html"']
 
 artifacts:
   objects:
-    location: 'gs://my-allure-reports/${BUILD_ID}/'
+    location: 'gs://my-allure-reports-new/'
     paths: ['allure-report/**']
 
 options:
