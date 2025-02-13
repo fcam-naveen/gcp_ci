@@ -12,7 +12,7 @@ steps:
   # Step 3: Execute tests inside the running container
   - id: 'Execute tests inside the running container'
     name: 'gcr.io/cloud-builders/docker'
-    args: ['exec', 'pytest-container', 'sh', '-c', 'pytest --alluredir=allure-results']
+    args: ['exec', 'pytest-container', 'bash', '-c', 'pytest --alluredir=allure-results']
 
  # Step 4: Generate Allure report inside the running container
   - id: 'Generate Allure Report'
